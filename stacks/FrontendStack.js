@@ -1,4 +1,4 @@
-import { ReactStaticSite, use } from "@serverless-stack/resources";
+import { StaticSite, use } from "sst/constructs";
 import { ApiStack } from "./ApiStack";
 import { AuthStack } from "./AuthStack";
 import { StorageStack } from "./StorageStack";
@@ -9,18 +9,10 @@ export function FrontendStack({ stack, app }) {
   const { bucket } = use(StorageStack);
 
   // Define our React app
-  const site = new ReactStaticSite(stack, "ReactSite", {
+  const site = new StaticSite(stack, "ReactSite", {
     path: "frontend",
     buildOutput: "build",
     buildCommand: "npm run build",
-    customDomain:
-  app.stage === "prod"
-    ? {
-        domainName: "pvherreramusic.com",
-        domainAlias: "www.pvherreramusic.com",
-      }
-    : undefined,
-    path: "frontend",
     // Pass in our environment variables
     environment: {
       REACT_APP_API_URL: api.customDomainUrl || api.url,
@@ -34,6 +26,6 @@ export function FrontendStack({ stack, app }) {
 
   // Show the url in the output
   stack.addOutputs({
-    SiteUrl: site.customDomainUrl || site.url || "http://localhost:3000",
+    SiteUrl: site.url || "http://localhost:3000",
   });
 }
